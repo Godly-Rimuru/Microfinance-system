@@ -79,6 +79,44 @@
       font-size: 1em;
       margin-bottom: 0.5em;
     }
+    /* Login Modal Styles */
+    #loginModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    #loginForm {
+      background: #fff;
+      padding: 2em 2em 1.5em 2em;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+    #loginForm h2 {
+      color: #007bff;
+      margin-bottom: 0.5em;
+      text-align: center;
+    }
+    #loginForm input {
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    #loginError {
+      color: red;
+      text-align: center;
+      display: none;
+      font-size: 0.95em;
+    }
     @media (max-width: 700px) {
       h1 { font-size: 1.5em; }
       .container { padding: 0.5em; }
@@ -86,59 +124,161 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Microfinance Information System</h1>
-    <section class="summary-section">
-      <h2>Summary</h2>
-      <div id="summary">
-        <span id="clientCount">Clients: 0</span> |
-        <span id="totalLoan">Total Loan: $0</span> |
-        <span id="totalOutstanding">Total Outstanding: $0</span>
-      </div>
-    </section>
-    <section class="add-client-section">
-      <h2>Add New Client</h2>
-      <form id="clientForm">
-        <input type="text" id="name" placeholder="Client Name" required>
-        <input type="number" id="loan" placeholder="Loan Amount" required>
-        <input type="email" id="email" placeholder="Email (optional)">
-        <input type="text" id="phone" placeholder="Phone (optional)">
-        <button type="submit">Add Client</button>
+    <!-- Login Modal -->
+    <div id="loginModal">
+      <form id="loginForm">
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button type="submit">Login</button>
+        <div id="loginError">Invalid username or password.</div>
+        <div style="text-align:center;margin-top:1em;">
+          <a href="#" id="showRegister" style="color:#007bff;cursor:pointer;">Create an account</a>
+        </div>
       </form>
-    </section>
-    <section class="search-section">
-      <input type="text" id="search" placeholder="Search by name">
-    </section>
-    <section class="client-list-section">
-      <h2>Clients</h2>
-      <table id="clientTable">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Loan</th>
-            <th>Repaid</th>
-            <th>Outstanding</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Created</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="clientTableBody">
-          <!-- Clients will be rendered here -->
-        </tbody>
-      </table>
-    </section>
-    <section class="admin-section">
-      <h2>Admin</h2>
-      <button id="backupBtn">Backup Clients</button>
-      <a id="downloadBackupBtn" href="/api/backup/download" download style="display:none;">Download Backup</a>
-      <button id="restoreBtn">Restore Clients</button>
-      <input type="file" id="restoreFileInput" accept="application/json" style="display:inline-block;margin-top:1em;">
-      <button id="restoreFileBtn">Restore from File</button>
-      <div id="adminMsg" style="margin-top:1em;color:green;"></div>
-    </section>
-  </div>
-  <script src="js/main.js"></script>
-</body>
+      <form id="registerForm" style="display:none;">
+        <h2>Create Account</h2>
+        <input type="text" id="registerUsername" placeholder="Username" required>
+        <input type="password" id="registerPassword" placeholder="Password" required>
+        <button type="submit">Register</button>
+        <div id="registerError" style="color:red;text-align:center;display:none;font-size:0.95em;"></div>
+        <div id="registerSuccess" style="color:green;text-align:center;display:none;font-size:0.95em;">Account created! You can now log in.</div>
+        <div style="text-align:center;margin-top:1em;">
+          <a href="#" id="showLogin" style="color:#007bff;cursor:pointer;">Back to login</a>
+        </div>
+      </form>
+    </div>
+    <div class="container" id="mainContent" style="display:none;">
+      <h1>Microfinance Information System</h1>
+      <section class="summary-section">
+        <h2>Summary</h2>
+        <div id="summary">
+          <span id="clientCount">Clients: 0</span> |
+          <span id="totalLoan">Total Loan: $0</span> |
+          <span id="totalOutstanding">Total Outstanding: $0</span>
+        </div>
+      </section>
+      <section class="add-client-section">
+        <h2>Add New Client</h2>
+        <form id="clientForm">
+          <input type="text" id="name" placeholder="Client Name" required>
+          <input type="number" id="loan" placeholder="Loan Amount" required>
+          <input type="email" id="email" placeholder="Email (optional)">
+          <input type="text" id="phone" placeholder="Phone (optional)">
+          <button type="submit">Add Client</button>
+        </form>
+      </section>
+      <section class="search-section">
+        <input type="text" id="search" placeholder="Search by name">
+      </section>
+      <section class="client-list-section">
+        <h2>Clients</h2>
+        <table id="clientTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Loan</th>
+              <th>Repaid</th>
+              <th>Outstanding</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="clientTableBody">
+            <!-- Clients will be rendered here -->
+          </tbody>
+        </table>
+      </section>
+      <section class="admin-section">
+        <h2>Admin</h2>
+        <button id="backupBtn">Backup Clients</button>
+        <a id="downloadBackupBtn" href="/api/backup/download" download style="display:none;">Download Backup</a>
+        <button id="restoreBtn">Restore Clients</button>
+        <input type="file" id="restoreFileInput" accept="application/json" style="display:inline-block;margin-top:1em;">
+        <button id="restoreFileBtn">Restore from File</button>
+        <div id="adminMsg" style="margin-top:1em;color:green;"></div>
+      </section>
+    </div>
+    <script>
+      // Login/Register toggle
+      const loginModal = document.getElementById('loginModal');
+      const mainContent = document.getElementById('mainContent');
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const loginError = document.getElementById('loginError');
+      const registerError = document.getElementById('registerError');
+      const registerSuccess = document.getElementById('registerSuccess');
+      document.getElementById('showRegister').onclick = function(e) {
+        e.preventDefault();
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'flex';
+        registerError.style.display = 'none';
+        registerSuccess.style.display = 'none';
+      };
+      document.getElementById('showLogin').onclick = function(e) {
+        e.preventDefault();
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'flex';
+        loginError.style.display = 'none';
+      };
+      // Login logic
+      loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('loginUsername').value;
+        const pass = document.getElementById('loginPassword').value;
+        fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success) {
+            loginModal.style.display = 'none';
+            mainContent.style.display = '';
+          } else {
+            loginError.style.display = 'block';
+          }
+        })
+        .catch(() => { loginError.style.display = 'block'; });
+      });
+      // Register logic
+      registerForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const user = document.getElementById('registerUsername').value;
+        const pass = document.getElementById('registerPassword').value;
+        fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: user, password: pass })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.success) {
+            registerError.style.display = 'none';
+            registerSuccess.style.display = 'block';
+          } else {
+            registerError.textContent = data.message || 'Registration failed.';
+            registerError.style.display = 'block';
+            registerSuccess.style.display = 'none';
+          }
+        })
+        .catch(() => {
+          registerError.textContent = 'Registration failed.';
+          registerError.style.display = 'block';
+          registerSuccess.style.display = 'none';
+        });
+      });
+      // Optionally, allow Enter key to submit
+      document.getElementById('loginPassword').addEventListener('keyup', function(e) {
+        if(e.key === 'Enter') loginForm.dispatchEvent(new Event('submit'));
+      });
+      document.getElementById('registerPassword').addEventListener('keyup', function(e) {
+        if(e.key === 'Enter') registerForm.dispatchEvent(new Event('submit'));
+      });
+    </script>
+    <script src="js/main.js"></script>
+  </body>
 </html>

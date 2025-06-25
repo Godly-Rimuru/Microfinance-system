@@ -55,6 +55,14 @@ function migrateDatabase() {
   });
 }
 
+// Create users table if not exists
+// Passwords are stored as plain text for demo; use hashing in production!
+db.run(`CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL
+)`);
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
@@ -286,6 +294,40 @@ app.post('/api/restore/upload', upload.single('backup'), (req, res) => {
       });
     };
     insertNext(0);
+  });
+});
+
+// Register endpoint
+app.post('/api/register', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.json({ success: false, message: 'Username and password required.' });
+  }
+  db.get('SELECT id FROM users WHERE username = ?', [username], (err, row) => {
+    if (row) {
+      return res.json({ success: false, message: 'Username already exists.' });
+    }
+    db.run('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], function(err) {
+      if (err) {
+        return res.json({ success: false, message: 'Registration failed.' });
+      }
+      res.json({ success: true });
+    });
+  });
+});
+
+// Login endpoint
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.json({ success: false });
+  }
+  db.get('SELECT id FROM users WHERE username = ? AND password = ?', [username, password], (err, row) => {
+    if (row) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
   });
 });
 
