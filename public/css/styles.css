@@ -248,3 +248,122 @@ tr:hover .floating-bubble {
   tr { margin-bottom: 1em; border-bottom: 2px solid #e0e0e0; }
   .actions button { margin-bottom: 0.5em; }
 }
+
+/* Login Modal Styles */
+#loginModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(120deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.25) 100%), url('../photo2.png') center center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeInBg 1s;
+}
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+#loginForm, #registerForm {
+  background: rgba(255,255,255,0.97);
+  padding: 2.5em 2.5em 2em 2.5em;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25), 0 1.5px 8px 0 rgba(0,0,0,0.08);
+  min-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2em;
+  align-items: center;
+  border: 1.5px solid #e0eafc;
+  position: relative;
+  animation: popIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+@keyframes popIn {
+  0% { transform: scale(0.8) translateY(40px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+#loginForm h2, #registerForm h2 {
+  color: #007bff;
+  margin-bottom: 0.2em;
+  text-align: center;
+  font-size: 2em;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,123,255,0.08);
+}
+#loginForm input, #registerForm input {
+  padding: 0.7em 1em;
+  font-size: 1.1em;
+  border-radius: 6px;
+  border: 1.5px solid #b6d4fe;
+  background: #f8fafc;
+  margin-bottom: 0.2em;
+  transition: border 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(0,123,255,0.04);
+}
+#loginForm input:focus, #registerForm input:focus {
+  border: 1.5px solid #007bff;
+  outline: none;
+  box-shadow: 0 2px 12px rgba(0,123,255,0.10);
+}
+#loginForm button, #registerForm button {
+  background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7em 2em;
+  margin-top: 0.5em;
+  font-size: 1.1em;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 12px rgba(0,123,255,0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+#loginForm button:hover, #registerForm button:hover {
+  background: linear-gradient(90deg, #0056b3 0%, #007bff 100%);
+  box-shadow: 0 4px 24px rgba(0,123,255,0.16);
+  transform: translateY(-2px) scale(1.03);
+}
+#loginError, #registerError {
+  color: #dc3545;
+  text-align: center;
+  display: none;
+  font-size: 1em;
+  margin-top: -0.5em;
+}
+#registerSuccess {
+  color: #28a745;
+  text-align: center;
+  display: none;
+  font-size: 1em;
+  margin-top: -0.5em;
+}
+.login-logo {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 0.5em;
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(0,123,255,0.10);
+  border: 2.5px solid #e0eafc;
+  background: #fff;
+  padding: 0.3em;
+  animation: logoPop 1s;
+}
+@keyframes logoPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+#loginForm a, #registerForm a {
+  color: #007bff;
+  text-decoration: underline;
+  font-size: 1em;
+  transition: color 0.2s;
+}
+#loginForm a:hover, #registerForm a:hover {
+  color: #0056b3;
+}
